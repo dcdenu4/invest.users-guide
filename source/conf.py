@@ -25,7 +25,7 @@ import setuptools_scm  # Just fail the process if this can't be found.
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 
 sys.path.append(os.path.abspath('../extensions'))
-extensions = ['sphinx.ext.mathjax', 'numfig', 'json']
+extensions = ['sphinx.ext.mathjax', 'numfig']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['.templates']

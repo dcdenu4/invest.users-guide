@@ -28,14 +28,14 @@ High-resolution Shoreline Database, J. Geophys. Res., 101)
 **British Columbia Shorezone Data** are provided courtesy of the Province of
 British Columbia, Ministry of Natural Resource Operations, GeoBC Division. The
 data used for this model is a snapshot in time. For the most current coastal
-resource and shorezone data please visit http://www.geobc.gov.bc.ca.
+resource and shorezone data please visit `http://www.geobc.gov.bc.ca`_.
 
 **Gridded Population of the World Version 3 (GPWv3)** data are provided
 courtesy of the Center for International Earth Science Information Network
 (CIESIN), Columbia University; and Centro Internacional de Agricultura Tropical
 (CIAT). 2005. Gridded Population of the World Version 3 (GPWv3): Population
 Grids. Palisades, NY: Socioeconomic Data and Applications Center (SEDAC),
-CIESIN, Columbia University. Available at http://sedac.ciesin.columbia.edu/gpw.
+CIESIN, Columbia University. Available at `http://sedac.ciesin.columbia.edu/gpw`_.
 
 **Department of Fisheries and Oceans Canada** provides commercial fishery data
 layers (groundfish trawl and longline, salmon troll, and shrimp trawl)

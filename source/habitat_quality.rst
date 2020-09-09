@@ -179,31 +179,35 @@ This section outlines the specific data used by the model. Please consult the In
 
 * **Results suffix** (optional). Text string that will be appended to the end of output file names, as "_Suffix". Use a Suffix to differentiate model runs, for example by providing a short name for each scenario. If a Suffix is not provided, or is not changed between model runs, the tool will overwrite previous results.
 
-* **Current Land Cover** (required). A GIS raster dataset, with an integer LULC code for each cell. The LULC raster should include the area of interest for the study, such that the area of interest is inset from the edges of the LULC raster by the width of the greatest maximum threat distance. Otherwise, locations near the edge of the area of interest may have inflated habitat quality scores, because threats outside the area of interest are not properly accounted for. This occurs when threats are at the edge of the LULC raster and the study area of interest is the entire LULC boundary. *The LULC codes must match the codes in the "Sensitivity of land cover types to each threat" table below.*
+* **Current Land Cover** (required). A GIS raster dataset, with an integer LULC code for each cell. The LULC raster will be used to define the geospatial extents for the corresponding threat rasters. *The LULC codes must match the codes in the "Sensitivity of land cover types to each threat" table below.*
 
-* **Future Land Cover** (optional).  A GIS raster dataset that represents a future scenario of LULC in the landscape with an integer LULC code for each cell. This file should be formatted exactly like the "Current Land Cover" above. LULC classes that appear on both the current and future maps should have the same LULC code.  LULC types unique to the future map should have codes not used in the current LULC map. Again, the LULC raster should include the area of interest for the study, such that the area of interest is inset from the edges of the LULC raster by the width of the greatest maximum threat distance. Otherwise, locations near the edge of the area of interest may have inflated habitat quality scores, because threats outside the area of interest are not properly accounted for. This occurs when threats are at the edge of the LULC raster and the study area of interest is the entire LULC boundary.
+* **Future Land Cover** (optional).  A GIS raster dataset that represents a future scenario of LULC in the landscape with an integer LULC code for each cell. This file should be formatted exactly like the "Current Land Cover" above. LULC classes that appear on both the current and future maps should have the same LULC code.  LULC types unique to the future map should have codes not used in the current LULC map.
 
-* **Baseline Land Cover** (optional). A GIS raster dataset of LULC types on a baseline landscape with an integer LULC code for each cell. This file should be formatted exactly like the "Current Land Cover" above. The LULC types that are common to the current or future and baseline landscapes should have the same LULC code across all maps.  LULC types unique to the baseline map should have codes not used in the current or future LULC map. Again, the LULC raster should include the area of interest for the study, such that the area of interest is inset from the edges of the LULC raster by the width of the greatest maximum threat distance. Otherwise, locations near the edge of the area of interest may have inflated habitat quality scores, because threats outside the area of interest are not properly accounted for. This occurs when threats are at the edge of the LULC raster and the study area of interest is the entire LULC boundary. Used to calculate habitat rarity.
+* **Baseline Land Cover** (optional). A GIS raster dataset of LULC types on a baseline landscape with an integer LULC code for each cell. This file should be formatted exactly like the "Current Land Cover" above. The LULC types that are common to the current or future and baseline landscapes should have the same LULC code across all maps.  LULC types unique to the baseline map should have codes not used in the current or future LULC map. The baseline LULC is required to calculate habitat rarity. When used to calculate habitat rarity corresponding threat rasters are optional for also calculating habitat quality for the baseline scenario.
 
   If possible, the baseline map should refer to a time when intensive management of the land was relatively rare.  For example, a map of LULC in 1851 in the Willamette Valley of Oregon, USA, captures the LULC pattern on the landscape before it was severely modified by massive agricultural production. Granted, this landscape had been modified by American Indian land clearing practices such as controlled fires as well.
 
 * **Threats data** (required). A CSV (comma-separated value, .csv) table of all threats you want the model to consider.  The table contains information on each threat's relative importance or weight and its impact across space.  The table is also where the filepath names for the threat rasters are defined. The filepath name is **relative** to Threats Data CSV input.
 
-  Each row in the Threats data CSV table is a degradation source, and columns must be named as follows:
+  Each row in the Threats data CSV table is a degradation source, and columns (case-insensitive) must be named as follows:
   
-  * *THREAT*. The name of the specific threat.
+  **Required**
+  
+  * *THREAT* - The name of the specific threat.
 
-  * *MAX_DIST*. The maximum distance over which each threat affects habitat quality (measured in kilometers).  The impact of each degradation source will decline to zero at this maximum distance.
+  * *MAX_DIST* - The maximum distance over which each threat affects habitat quality (measured in kilometers).  The impact of each degradation source will decline to zero at this maximum distance.
 
-  * *WEIGHT*. The impact of each threat on habitat quality, relative to other threats. Weights can range from 1 at the highest impact, to 0 at the lowest.
+  * *WEIGHT* - The impact of each threat on habitat quality, relative to other threats. Weights can range from 1 at the highest impact, to 0 at the lowest.
 	
-  * *DECAY*. The type of decay over space for the threat. Can have the value of either "linear" or "exponential".
+  * *DECAY* - The type of decay over space for the threat. Can have the value of either "linear" or "exponential".
 
-  * *BASE_PATH*. The threat raster filepath for the base scenario where the filepath is relative to the threat CSV input. Entries can be left empty if using the baseline LULC for rarity calculations only.
+  * *CUR_PATH* - The threat raster filepath for the current scenario where the filepath is relative to the threat CSV input. Entries are required.
   
-  * *CUR_PATH*. The threat raster filepath for the current scenario where the filepath is relative to the threat CSV input. Entries are required.
+  **Optional** 
   
-  * *FUT_PATH*. The threat raster filepath for the future scenario where the filepath is relative to the threat CSV input. Entries are required if the future LULC was input, otherwise can be left empty if looking at current scenario only.
+  * *BASE_PATH* - Required if baseline LULC is input. The threat raster filepath for the base scenario where the filepath is relative to the threat CSV input. Entries can be left empty if there is no baseline scenario or if using the baseline LULC for rarity calculations only.
+  
+  * *FUT_PATH* - Required if future LULC is input. The threat raster filepath for the future scenario where the filepath is relative to the threat CSV input. Entries are required if the future LULC was input, otherwise can be left empty if looking at current scenario only.
 
  Example: Hypothetical study with three threats for both current and future scenarios. Agriculture (*Agric* in the table) degrades habitat over a larger distance than roads do, and has a greater overall magnitude of impact. Further, paved roads (*Paved_rd*) attract more traffic than dirt roads (*Dirt_rd*) and thus are more destructive to nearby habitat than dirt roads. Filepaths are relative to the Threat data table, so in this instance the current threats are found in the same directory as the table and the future threats are found in a sub directory adjacent to the Threat data table called *future*. Baseline threat filepaths are left blank because we do not have threat rasters for that scenario OR we have not included the baseline LULC in our model run altogether.
 
@@ -217,9 +221,7 @@ This section outlines the specific data used by the model. Please consult the In
 
 |
 
-* **Threat Rasters Information**: GIS raster files of the distribution and intensity of each individual threat, with values between 0 and 1. You will have as many of these maps as you have threats and the raster filepath should be defined in the **Threats data** table. These threat maps should cover the area of interest of the study, such that the area of interest is inset from the edges of the threat raster by the width of the maximum threat distance. Otherwise, locations near the edge of the area of interest may have inflated habitat quality scores, because threats outside the area of interested are not properly accounted for.
-
-  Each cell in the raster contains a value that indicates the density or presence of a threat within it (e.g., area of agriculture, length of roads, or simply a 1 if the grid cell is a road or crop field and 0 otherwise). All threats should be measured in the same scale and units (i.e., all measured in density terms or all measured in presence/absence terms) and not some combination of metrics. The extent and resolution of these raster datasets does not need to be identical to that of the input LULC maps. In cases where the threats and LULC map resolutions vary, the model will use the resolution and extent of the LULC map. Do not leave any area on the threat maps as 'No Data'. If pixels do not contain that threat set the pixels' threat level equal to 0.
+* **Threat Rasters Information**: GIS raster files of the distribution and intensity of each individual threat, with values between 0 and 1. You will have as many of these maps as you have threats and the raster filepath should be defined in the **Threats data** table.  The extent and resolution of these raster datasets does not need to be identical to that of the input LULC maps. In cases where the threats and LULC map resolutions vary, the model will use the resolution and extent of the LULC map. Each cell in the raster contains a value that indicates the density or presence of a threat within it (e.g., area of agriculture, length of roads, or simply a 1 if the grid cell is a road or crop field and 0 otherwise). All threats should be measured in the same scale and units (i.e., all measured in density terms or all measured in presence/absence terms) and not some combination of metrics.  Do not leave any area on the threat maps as 'No Data'. If pixels do not contain that threat set the pixels' threat level equal to 0.
 	
   InVEST will not prompt you for these rasters in the tool interface but will instead look for their filepaths in the **Threats data** table under the corresponding scenario columns. The paths should be **relative** to the **Threats data** table path.
   
@@ -237,7 +239,7 @@ This section outlines the specific data used by the model. Please consult the In
 
 * **Sensitivity of Land Cover Types to Each Threat** (required): A CSV (comma-separated value, .csv) table of LULC types, whether or not they are considered habitat, and, for LULC types that are habitat, their specific sensitivity to each threat.
 
-  Each row in the Sensitivity CSV table is an LULC type, and columns must be named as follows:
+  Each row in the Sensitivity CSV table is an LULC type, and columns (case-insensitive) must be named as follows:
 
   * *LULC*: Numeric integer code for each LULC type. Values must match the codes used in the current, future and baseline LULC rasters.  *All LULC types that appear in the current, future, or baseline maps must have a row in this table.*
 
@@ -245,12 +247,12 @@ This section outlines the specific data used by the model. Please consult the In
 
   * *HABITAT*: Each LULC type is assigned a habitat score (:math:`H_j` in the equations above), from 0 to 1. If you want to simply classify each LULC as habitat or not without reference to any particular species group then use 0s and 1s where a 1 indicates habitat. Otherwise, if sufficient information is available on a species group's habitat preferences, assign the LULC a relative habitat suitability score between 0 and 1 where 1 indicates the highest habitat suitability.  For example, a grassland songbird may prefer a native prairie habitat above all other habitat types (prairie is given a "HABITAT" score of 1 for grassland birds), but will also use a managed hayfield or pasture if prairie is not available (managed hayfield and pasture are given a "HABITAT" score of 0.5 for grassland birds).
 
-  * *L_THREAT1, L_THREAT2*, etc.: The relative sensitivity of each habitat type to each threat. You will have as many columns named like this as you have threats, and the "_THREAT1", "_THREAT2" etc portions of the column names must match row names in the "Threat data" table noted above. Values range from 0 to 1, where 1 represents high sensitivity to a threat and 0 represents no sensitivity. Note: Even if the LULC is not considered habitat, do not leave its sensitivity to each threat as Null or blank, instead enter a 0 and the model will convert it to NoData.
+  * *THREAT1, THREAT2*, etc.: The relative sensitivity of each habitat type to each threat. You will have as many columns named like this as you have threats, and the "THREAT1", "THREAT2" etc portions of the column names must match row names in the "Threat data" table noted above. Values range from 0 to 1, where 1 represents high sensitivity to a threat and 0 represents no sensitivity. Note: Even if the LULC is not considered habitat, do not leave its sensitivity to each threat as Null or blank, instead enter a 0 and the model will convert it to NoData.
 
-  *Example:* A hypothetical study with four LULC types and three threats.  In this example we treat Closed Woodland and Forst Mosaic as (absolute) habitat and Bare Soil and Cultivation as (absolute) non-habitat.  Forest mosaic is the most sensitive (least resistant) habitat type, and is more sensitive to dirt roads (L_DIRT_RD, value 0.9) than paved roads (L_PAVED_RD, value 0.5) or agriculture (L_AGRIC value 0.8). We enter 0s across all threats for the two developed land covers, Bare Soil and Cultivation, since they are not habitat.
+  *Example:* A hypothetical study with four LULC types and three threats.  In this example we treat Closed Woodland and Forst Mosaic as (absolute) habitat and Bare Soil and Cultivation as (absolute) non-habitat.  Forest mosaic is the most sensitive (least resistant) habitat type, and is more sensitive to dirt roads (DIRT_RD, value 0.9) than paved roads (PAVED_RD, value 0.5) or agriculture (AGRIC value 0.8). We enter 0s across all threats for the two developed land covers, Bare Soil and Cultivation, since they are not habitat.
 
   ====    =============== ======= ======= ==========  =========
-  LULC    NAME            HABITAT L_AGRIC L_PAVED_RD  L_DIRT_RD
+  LULC    NAME            HABITAT AGRIC   PAVED_RD    DIRT_RD
   ====    =============== ======= ======= ==========  =========
   1       Bare Soil       0       0       0           0
   2       Closed Woodland 1       0.5     0.2         0.4
@@ -267,6 +269,13 @@ Running the Model
 
 To launch the Habitat Quality model navigate to the Windows Start Menu -> All Programs -> InVEST [*version*] -> Habitat Quality. The interface does not require a GIS desktop, although the results will need to be explored with any GIS tool such as ArcGIS or QGIS.
 
+Advanced Usage
+--------------
+
+This model supports avoided re-computation. This means the model will detect intermediate and final results from a previous run in the same workspace and it will avoid re-calculating any outputs that will be identical to the previous run. This can save significant processing time for successive runs when only some input parameters have changed. For example, if the same current LULC and corresponding threat rasters are used but now a future scenario was added, the model can re-use the intermediate current LULC calculations from a previous run and only spend time computing variables that have changed.
+
+This model also supports parallel processing. If multiple CPUs are available, users can select the number to use by selecting from the dropdown menu in *File > Settings > taskgraph_n_workers_parameter*. The Habitat Quality model has many operations that can run in parallel, the optimal number of CPUs to use is dependent on the input datasets.
+
 .. primer
 
 .. _interpreting-results:
@@ -275,6 +284,9 @@ Interpreting Results
 --------------------
 
 The following is a short description of each of the outputs from the Habitat Quality model. Final results are found within the user defined Workspace specified for this model run. "Suffix" in the following file names refers to the optional user-defined Suffix input to the model.
+
+**Degradation and Habitat Quality Edge Effects**
+  Habitat quality and degradation values near the edges of the output rasters may be inflated because they do not account for threats that may exist beyond the extent of the land cover rasters. All input threat data are clipped to the extent of the LULC raster, so users should restrict interpretation of the results by disregarding values that are within the maximum threat distance of the edge of the output rasters.
 
 * **[Workspace]** folder:
 
